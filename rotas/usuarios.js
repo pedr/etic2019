@@ -3,6 +3,7 @@ const router = require('express').Router();
 const knex = require('../database/db.js')
 const crypto = require('crypto');
 
+// lista usuários
 router.get('/', (req, res) => {
     knex().select().from('usuarios')
         .then(r => {
@@ -11,6 +12,8 @@ router.get('/', (req, res) => {
         .catch(console.error)
 });
 
+
+// realiza login
 router.post('/login', async (req, res) => {
     const { email, senha } = req.body;
     console.log(req.headers)
@@ -33,6 +36,7 @@ router.post('/login', async (req, res) => {
     }
 })
 
+// cria novo usuário
 router.post('/', (req, res) => {
     const { email, senha } = req.body
     knex().insert({ email, senha }).into('usuarios')

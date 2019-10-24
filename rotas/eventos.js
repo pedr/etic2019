@@ -2,7 +2,8 @@
 const router = require('express').Router();
 const knex = require('../database/db')
 
-
+// middleware response por verificar se usuario possui
+// o header de autenticação para acessar as próximas rotas
 router.use('/', async (req, res, next) => {
     const { authorization } = req.headers;
     knex('usuarios').where('token', authorization).first()
@@ -21,6 +22,16 @@ router.use('/', async (req, res, next) => {
         })
 })
 
+// pega todos os eventos
+router.get('/', (req, res) => {
+    knex().select().from('eventos')
+        .then(r => {
+            res.json(r)
+        })
+});
+
+
+// pega informação de um evento 
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -41,6 +52,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// atualiza um evento
 router.put('/:id', async (req, res) => {
     const { nome, horario } = req.body;
     const { id } = req.params;
@@ -66,6 +78,7 @@ router.put('/:id', async (req, res) => {
     }
 })
 
+// realiza um sorteio de um dos usuários cadastrados nesse evento
 router.get('/:id/sorteio', async (req, res) => {
     const { id } = req.params;
     try {
@@ -81,6 +94,7 @@ router.get('/:id/sorteio', async (req, res) => {
     }
 })
 
+// seria para criar
 router.post('/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -91,23 +105,6 @@ router.post('/:id', async (req, res) => {
     }
 })
 
-router.get('/', (req, res) => {
-    knex().select().from('eventos')
-        .then(r => {
-            res.json(r)
-        })
-});
-
-router.post('/', (req, res) => {
-    const { email, senha } = req.body
-    knex().insert({ email, senha }).into('usuarios')
-        .then(r => {
-            console.log(r)
-        })
-        .catch(console.error)
-
-    res.json();
-});
 
 
 module.exports = router;
